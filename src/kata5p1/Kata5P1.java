@@ -1,11 +1,13 @@
 package kata5p1;
 
+import java.io.FileNotFoundException;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 
 public class Kata5P1 {
@@ -45,8 +47,25 @@ public class Kata5P1 {
         stm.execute(sql);
     }
     
-    public static void main(String[] args) throws SQLException {
+    private static void insert(String email) throws SQLException{
+        String sql = "INSERT INTO MAIL(mail) VALUES(?)";
+        
+        Connection con = Kata5P1.connect();
+        PreparedStatement pstmt = con.prepareStatement(sql);
+        pstmt.setString(1, email);
+        pstmt.executeUpdate();
+                
+    }
+    public static void main(String[] args) throws SQLException, FileNotFoundException {
        
-        createTable();
+        String fileName = "email.txt";
+        
+        MailListReader reader = new MailListReader();
+        
+        List<String> mails = reader.read(fileName);
+        
+        for (String mail : mails) {
+            Kata5P1.insert(mail);
+        }
     }
 }
